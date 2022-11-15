@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Box }from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
-import CardPost from './CardPost';
+import CardPost from './components/CardPost';
 
 export default function Posts() {
 

@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { NavLink } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { API_URL } from '../config';
+import { API_URL } from '../../config';
 
 export default function CardPost({ post }) {
 
@@ -36,7 +37,9 @@ export default function CardPost({ post }) {
             </Typography>
         </CardContent>
         <CardActions>
-            <Button size="small">Learn More</Button>
+            <NavLink to={`posts/${post.id}`}>
+                <Button size="small">Learn More</Button>
+            </NavLink>
         </CardActions>
         </Card>
     );

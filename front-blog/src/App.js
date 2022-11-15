@@ -1,16 +1,15 @@
 import './App.css';
 import Container from '@mui/material/Container';
-import Posts from './components/Posts';
+import { Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
 
 function App() {
 	return (
 		<Container>
-			<div>
-				<h1>Blog</h1>
-				<Posts />
-			</div>
+			<Suspense>
+				<Outlet />
+			</Suspense>
 		</Container>
-		
 	);
 }
 
