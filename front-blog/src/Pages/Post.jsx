@@ -12,33 +12,40 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useParams } from "react-router-dom";
 import { API_URL } from '../config';
-import CardComments from './components/CardComments';
 import FormComment from './components/FormComment';
+import { findOne } from '../services/postApis';
+import { findAllComments } from '../services/commentApi';
+import PostContentLoader from './components/PostContentLoader';
 
 
 export default function Post() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [post, setPost] = useState(null);
+    const [comments, setComments] = useState([]);
 
 
     const { id } = useParams();
 
+    const fetchPost = async () => {
+        const data = await findOne(id);
+        setPost(data.data.attributes);
+        setIsLoading(true);
+    }
+
+    const fetchComments = async () => {
+        const data = await findAllComments();
+        console.log(data);
+        setComments(data.data);
+        setIsLoading(true);
+    }
 
     useEffect(() => {
-        fetch(`${ API_URL }/api/posts/${id}?populate=image`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(response => {
-                const data = response.data.attributes;
-                setPost(data);
-                setIsLoading(true);
-            });
-    },[id]);
+        fetchPost();
+        fetchComments();
+    }, []);
+
+    
 
     // recuperer l'url de l'image
     const postImages = post?.image.data;
@@ -59,23 +66,42 @@ export default function Post() {
                         { isLoading ? post.title : <Skeleton variant="text" width={300} height={80} />}
                     </h1>
                     <p>{ isLoading ? post.content : (
-                        <>
-                            <Skeleton variant="text" />
-                            <Skeleton variant="text" />
-                            <Skeleton variant="text" />
-                            <Skeleton variant="text" />
-                            <Skeleton variant="text" />
-                            <Skeleton variant="text" />
-                        </>
+                        <PostContentLoader />
                     ) }</p>
                 </Grid>
             </Grid>
             <Grid container spacing={2}>
                 <Grid item md={4}>
-                    <FormComment />
+                    <FormComment fetchComments={fetchComments} />
                 </Grid>
                 <Grid item md={8}>
-                    <CardComments />
+                    {isLoading ? comments.map( comment => (
+                    <List key={comment.id} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                        <ListItem alignItems="flex-start">
+                            <ListItemAvatar>
+                            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                            </ListItemAvatar>
+                            <ListItemText
+                            primary={comment.attributes.pseudo}
+                            secondary={
+                                <React.Fragment>
+                                <Typography
+                                    sx={{ display: 'inline' }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                >
+                                    {comment.attributes.content}
+                                </Typography>
+                                </React.Fragment>
+                            }
+                            />
+                        </ListItem>
+                        <Divider variant="inset" component="li" />
+                    </List>
+                    )) : (
+                        <PostContentLoader />
+                    )}
                 </Grid>
             </Grid>
         </div>

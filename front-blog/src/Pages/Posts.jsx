@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Box }from '@mui/material';
-import Skeleton from '@mui/material/Skeleton';
 import CardPost from './components/CardPost';
+import PostContentLoader from './components/PostContentLoader';
+import { findAll } from '../services/postApis';
 
 export default function Posts() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [posts, setPosts] = useState([]);
 
+    const fetchAllPosts = async () => {
+        const data = await findAll();
+        setPosts(data.data);
+        setIsLoading(false);
+    }
+
     useEffect(() => {
-        fetch('http://localhost:1337/api/posts/?populate=image', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(response => {
-                console.log(response.data);
-                setPosts(response.data);
-                setIsLoading(false);
-            });
+
+        fetchAllPosts();
+
     }, []);
 
     return (
@@ -29,13 +27,7 @@ export default function Posts() {
             <Grid container spacing={3}>
                 {isLoading ? (
                     <Box sx={{ width: '100%' }}>
-                        {/* For variant="text", adjust the height via font-size */}
-                        <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-
-                        {/* For other variants, adjust the size with `width` and `height` */}
-                        <Skeleton variant="circular" width={40} height={40} />
-                        <Skeleton variant="rectangular" width={210} height={60} />
-                        <Skeleton variant="rounded" width={210} height={60} />
+                        <PostContentLoader />
                     </Box>
                 ) : posts.map(post => (
                     <CardPost key={post.id} post={post} />
