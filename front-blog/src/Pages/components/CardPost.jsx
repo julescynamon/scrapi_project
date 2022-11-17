@@ -13,19 +13,14 @@ export default function CardPost({ post }) {
 
     const postImages = post.attributes.image.data;
 
-    const newImg = postImages.map((img) => {
-        return img.attributes.formats.small.url;
-    });
-
-    const imgString = newImg.toString();
-
+    const newImg = postImages.attributes.formats.small.url.toString();
 
     return (
         <Card sx={{ maxWidth: 345 }}>
         <CardMedia
             component="img"
             height="140"
-            image={ API_URL + imgString}
+            image={ API_URL + newImg}
             alt="green iguana"
         />
         <CardContent>
