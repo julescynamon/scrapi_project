@@ -13,8 +13,7 @@ import Button from '@mui/material/Button';
 import { useParams } from "react-router-dom";
 import { API_URL } from '../config';
 import FormComment from './components/FormComment';
-import { findOne } from '../services/postApis';
-import { findAllComments } from '../services/commentApi';
+import { findOne, getComments } from '../services/postApis';
 import PostContentLoader from './components/PostContentLoader';
 
 
@@ -34,9 +33,9 @@ export default function Post() {
     }
 
     const fetchComments = async () => {
-        const data = await findAllComments();
+        const data = await getComments(id);
         console.log(data);
-        setComments(data.data);
+        setComments(data);
         setIsLoading(true);
     }
 
@@ -45,7 +44,7 @@ export default function Post() {
         fetchComments();
     }, []);
 
-    
+
 
     // recuperer l'url de l'image
     const postImages = post?.image.data;
@@ -63,26 +62,26 @@ export default function Post() {
                 </Grid>
                 <Grid item sm={6}>
                     <h1>
-                        { isLoading ? post.title : <Skeleton variant="text" width={300} height={80} />}
+                        { isLoading ? post?.title : <Skeleton variant="text" width={300} height={80} />}
                     </h1>
-                    <p>{ isLoading ? post.content : (
+                    <p>{ isLoading ? post?.content : (
                         <PostContentLoader />
                     ) }</p>
                 </Grid>
             </Grid>
             <Grid container spacing={2}>
                 <Grid item md={4}>
-                    <FormComment fetchComments={fetchComments} />
+                    <FormComment fetchComments={fetchComments} id={id} />
                 </Grid>
                 <Grid item md={8}>
-                    {isLoading ? comments.map( comment => (
+                    {isLoading ? comments?.map( comment => (
                     <List key={comment.id} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                         <ListItem alignItems="flex-start">
                             <ListItemAvatar>
                             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
                             </ListItemAvatar>
                             <ListItemText
-                            primary={comment.attributes.pseudo}
+                            primary={comment.pseudo}
                             secondary={
                                 <React.Fragment>
                                 <Typography
@@ -91,7 +90,7 @@ export default function Post() {
                                     variant="body2"
                                     color="text.primary"
                                 >
-                                    {comment.attributes.content}
+                                    {comment.content}
                                 </Typography>
                                 </React.Fragment>
                             }

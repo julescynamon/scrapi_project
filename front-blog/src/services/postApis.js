@@ -1,4 +1,5 @@
 import { API_URL } from '../config';
+import axios from 'axios';
 
 
 export function findAll() {
@@ -21,3 +22,6 @@ export function findOne(id) {
             .then(response => response.json());
 }
 
+export function getComments(id) {
+    return axios.get(`${API_URL}/api/posts/${id}/comments`).then(response => response.data);
+}

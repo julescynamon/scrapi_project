@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export function findAllComments() {
     return axios
-        .get(API_URL + "/api/comments")
+        .get(API_URL + "/api/comments?populate=*")
         .then(response => response.data);
 };
 
